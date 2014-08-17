@@ -111,7 +111,8 @@ void draw_match(tty_t *tty, const char *choice, int selected){
 	if(selected)
 		tty_setinvert(tty);
 
-	for(size_t i = 0, p = 0; choice[i] != '\0'; i++){
+	size_t maxcol = tty_getwidth(tty);
+	for(size_t i = 0, p = 0; choice[i] && i < maxcol; i++){
 		if(positions[p] == i){
 			tty_setfg(tty, TTY_COLOR_HIGHLIGHT);
 			p++;

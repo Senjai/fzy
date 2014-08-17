@@ -1,8 +1,11 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <termios.h>
+#include <sys/ioctl.h>
 
 #include "tty.h"
 
@@ -13,6 +16,9 @@ void tty_reset(tty_t *tty){
 void tty_init(tty_t *tty){
 	tty->fdin = open("/dev/tty", O_RDONLY);
 	tty->fout = fopen("/dev/tty", "w");
+
+	/* Use full buffering: no flushing on newline*/
+	setvbuf(tty->fout, NULL, _IOFBF, 4096);
 
 	tcgetattr(tty->fdin, &tty->original_termios);
 
@@ -82,3 +88,11 @@ void tty_flush(tty_t *tty){
 	fflush(tty->fout);
 }
 
+size_t tty_getwidth(tty_t *tty){
+	struct winsize ws;
+	if(ioctl(fileno(tty->fout), TIOCGWINSZ, &ws) == -1){
+		return 80;
+	}else{
+		return ws.ws_col;
+	}
+}

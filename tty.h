@@ -40,4 +40,6 @@ void tty_setcol(tty_t *tty, int col);
 void tty_printf(tty_t *tty, const char *fmt, ...);
 void tty_flush(tty_t *tty);
 
+size_t tty_getwidth(tty_t *tty);
+
 #endif
