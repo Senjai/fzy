@@ -7,7 +7,10 @@
 
 #define INITIAL_CAPACITY 1
 
-static int cmpchoice(size_t *idx1, size_t *idx2, double *choices_score) {
+static int cmpchoice(const void *_idx1, const void *_idx2, void *_choices_score) {
+	const size_t *idx1 = _idx1;
+	const size_t *idx2 = _idx2;
+	const double *choices_score = _choices_score;
 	double score1 = choices_score[*idx1];
 	double score2 = choices_score[*idx2];
 
@@ -71,7 +74,7 @@ void choices_search(choices_t *c, const char *search){
 		}
 	}
 
-	qsort_r(c->sorted, c->available, sizeof(size_t), (int (*)(const void *, const void *, void *))cmpchoice, c->scores);
+	qsort_r(c->sorted, c->available, sizeof(size_t), cmpchoice, (void *)c->scores);
 }
 
 const char *choices_get(choices_t *c, size_t n){
